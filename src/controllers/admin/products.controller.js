@@ -40,7 +40,7 @@ const create = async (req, res) => {
       [r.insertId]
     );
 
-    // Si usás Socket.IO: req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ id: r.insertId });
   } catch (e) {
     console.error("products.create error:", e);
@@ -67,7 +67,7 @@ const update = async (req, res) => {
     const vals = Object.values(data);
 
     await pool.query(`UPDATE products SET ${set} WHERE id = ?`, [...vals, id]);
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("products.update error:", e);
@@ -80,7 +80,7 @@ const remove = async (req, res) => {
     const { id } = req.params;
     await pool.query(`DELETE FROM inventory WHERE product_id = ?`, [id]);
     await pool.query(`DELETE FROM products WHERE id = ?`, [id]);
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("products.remove error:", e);

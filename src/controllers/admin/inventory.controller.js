@@ -10,7 +10,7 @@ const updateStock = async (req, res) => {
        ON DUPLICATE KEY UPDATE stock = VALUES(stock), updated_at = CURRENT_TIMESTAMP`,
       [productId, Number(stock)]
     );
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("inventory.updateStock error:", e);

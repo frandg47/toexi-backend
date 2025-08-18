@@ -19,7 +19,7 @@ const create = async (req, res) => {
       `INSERT INTO payment_methods (name, multiplier) VALUES (?, ?)`,
       [name, multiplier]
     );
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ id: r.insertId });
   } catch (e) {
     console.error("pm.create error:", e);
@@ -35,7 +35,7 @@ const update = async (req, res) => {
       `UPDATE payment_methods SET name = ?, multiplier = ? WHERE id = ?`,
       [name, multiplier, id]
     );
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("pm.update error:", e);
@@ -47,7 +47,7 @@ const remove = async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query(`DELETE FROM payment_methods WHERE id = ?`, [id]);
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("pm.remove error:", e);

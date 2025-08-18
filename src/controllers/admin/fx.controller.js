@@ -8,7 +8,7 @@ const setActiveFx = async (req, res) => {
       `INSERT INTO fx_rates (rate, source, is_active) VALUES (?, ?, 1)`,
       [rate, source || null]
     );
-    // req.io?.emit("fx.updated");
+    req.io?.emit("fx.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("fx.setActiveFx error:", e);

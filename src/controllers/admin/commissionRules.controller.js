@@ -25,7 +25,7 @@ const create = async (req, res) => {
        VALUES (?, ?, ?, ?, ?)`,
       [category_id, brand_id, commission_pct, commission_fixed, priority]
     );
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ id: r.insertId });
   } catch (e) {
     console.error("cr.create error:", e);
@@ -42,7 +42,7 @@ const update = async (req, res) => {
 
     const set = Object.keys(data).map(k => `${k} = ?`).join(", ");
     await pool.query(`UPDATE commission_rules SET ${set} WHERE id = ?`, [...Object.values(data), id]);
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("cr.update error:", e);
@@ -54,7 +54,7 @@ const remove = async (req, res) => {
   try {
     const { id } = req.params;
     await pool.query(`DELETE FROM commission_rules WHERE id = ?`, [id]);
-    // req.io?.emit("products.updated");
+    req.io?.emit("products.updated");
     res.json({ ok: true });
   } catch (e) {
     console.error("cr.remove error:", e);
