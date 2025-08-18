@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { list, create, update, remove } = require("../../controllers/admin/products.controller");
+const { list, create, update, remove } = require("../../controllers/admin/commissionRules.controller");
 
 router.get("/", list);
 router.post("/", create);
