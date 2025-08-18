@@ -16,11 +16,11 @@ app.get("/", (req, res) => {
 });
 
 // Ejemplo: probar conexión con DB más adelante
-// const pool = require("./db");
-// app.get("/ping", async (req,res) => {
-//   const [rows] = await pool.query("SELECT NOW() AS now");
-//   res.json(rows[0]);
-// });
+const pool = require("./src/config/db");
+app.get("/ping", async (req,res) => {
+  const [rows] = await pool.query("SELECT NOW() AS now");
+  res.json(rows[0]);
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
