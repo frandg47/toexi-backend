@@ -4,7 +4,7 @@ const pool = require("../../config/db");
 const list = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT p.*, b.name AS brand, c.name AS category, IFNULL(i.stock,0) AS stock
+      `SELECT p.*, p.image_url, b.name AS brand, c.name AS category, IFNULL(i.stock,0) AS stock
        FROM products p
        LEFT JOIN brands b ON b.id=p.brand_id
        JOIN categories c ON c.id=p.category_id

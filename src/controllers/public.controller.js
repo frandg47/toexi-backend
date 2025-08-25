@@ -23,30 +23,35 @@ const getProducts = async (req, res) => {
     );
     const fxRate = fx?.rate || 0;
 
-    const [products] = await pool.query(`
-      SELECT p.id, p.name, p.usd_price, p.commission_pct, p.commission_fixed,
-             p.allow_backorder, p.lead_time_label, p.active,
-             b.name AS brand, c.name AS category,
-             p.brand_id, p.category_id,
-             IFNULL(i.stock, 0) AS stock
+    const [products] =
+      await pool.query(`SELECT p.id, p.name, p.usd_price, p.image_url, p.commission_pct, p.commission_fixed,
+      p.allow_backorder, p.lead_time_label, p.active,
+      b.name AS brand, c.name AS category,
+      p.brand_id, p.category_id,
+      IFNULL(i.stock, 0) AS stock
       FROM products p
       LEFT JOIN brands b ON b.id = p.brand_id
       JOIN categories c ON c.id = p.category_id
       LEFT JOIN inventory i ON i.product_id = p.id
       WHERE p.active = 1
-      ORDER BY c.name, b.name, p.name
-    `);
+      ORDER BY c.name, b.name, p.name`); // Tu consulta actual
 
     const [methods] = await pool.query(
       "SELECT id, name, multiplier FROM payment_methods ORDER BY id"
     );
 
-    // Opcional: cache simple en respuesta pública
+    // Paso 1: Obtener todas las reglas de comisión en una sola consulta
+    const [commissionRules] = await pool.query(
+      `SELECT brand_id, category_id, commission_pct, commission_fixed, priority
+             FROM commission_rules ORDER BY priority ASC`
+    );
+
     res.set("Cache-Control", "public, max-age=10");
 
     const result = [];
     for (const p of products) {
-      const rule = await findBestRule(p.category_id, p.brand_id);
+      // Paso 2: Pasar el array de reglas a una función que busque en memoria
+      const rule = findBestRule(p.category_id, p.brand_id, commissionRules);
       result.push(buildProductView(p, fxRate, methods, rule));
     }
     res.json(result);

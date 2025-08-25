@@ -6,16 +6,13 @@ function roundARS(n) {
 }
 
 /** Busca mejor regla de comisión (marca+categoría > marca > categoría > null) */
-async function findBestRule(categoryId, brandId) {
-  const [rows] = await pool.query(
-    `SELECT * FROM commission_rules
-     WHERE (category_id = ? OR category_id IS NULL)
-       AND (brand_id = ? OR brand_id IS NULL)
-     ORDER BY priority ASC
-     LIMIT 1`,
-    [categoryId, brandId]
+function findBestRule(categoryId, brandId, allRules) {
+  // Buscar en el array de reglas cargadas previamente
+  const rule = allRules.find(r => 
+    (r.category_id === categoryId || r.category_id === null) &&
+    (r.brand_id === brandId || r.brand_id === null)
   );
-  return rows[0] || null;
+  return rule || null;
 }
 
 function calcCommissionARS(prod, arsPrice, rule) {
@@ -47,7 +44,8 @@ function buildProductView(prod, fxRate, paymentMethods, rule) {
     usd,
     ars: arsBase,
     pricesByMethod,
-    commissionARS
+    commissionARS,
+    imageUrl: prod.image_url,
   };
 }
 
